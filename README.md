@@ -8,6 +8,12 @@ compatible strings.
 WHY NOT? The libraries out there didn't meet my precise use case and I wanted to
 learn more about the intricacies of the standard, so I did this in an afternoon.
 
+## Using
+
+```bash
+go g
+```
+
 ## Contributing
 
 You can if you want to. Make sure to follow the [code of conduct](./CODE_OF_CONDUCT.md).
