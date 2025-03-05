@@ -1,3 +1,6 @@
+[![Go Reference](https://pkg.go.dev/badge/github.com/jghiloni/semver.svg)](https://pkg.go.dev/github.com/jghiloni/semver)
+
+
 # semver
 
 Yet another Go library and CLI for parsing and modifying [semver](https://semver.org)-
@@ -11,7 +14,7 @@ learn more about the intricacies of the standard, so I did this in an afternoon.
 ## Using
 
 ```bash
-go g
+go install github.com/jghiloni/semver/semver-cli@latest
 ```
 
 ## Contributing
