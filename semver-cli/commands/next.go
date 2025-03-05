@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 	"sort"
 
@@ -15,7 +14,7 @@ type NextCommand struct {
 
 func (n *NextCommand) Run(k *kong.Context, versions semver.Versions) error {
 	if len(versions) == 0 {
-		return errors.New("need at least one version")
+		return errEmptyInputStream
 	}
 
 	sort.Sort(sort.Reverse(versions))

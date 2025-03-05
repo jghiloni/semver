@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -14,6 +15,7 @@ import (
 type cmdLineArgs struct {
 	Normalize             *NormalizeCommand `cmd:"" default:"1" help:"Parse the versions on stdin in a tolerant way and output them as compliant semver strings"`
 	Next                  *NextCommand      `cmd:"" help:"Take the latest version on stdin and increase it based on which field is chosen"`
+	Release               *ReleaseCommand   `cmd:"" help:"If the latest version on stdin has prerelease information, remove it"`
 	Version               kong.VersionFlag  `short:"V" help:"Show the version of this CLI and exit"`
 	IgnoreInvalidVersions bool              `short:"i" negatable:"" default:"true" help:"If set, discard any text on stdin that does not parse as a semver string"`
 	Silent                bool              `short:"q" help:"If set, don't output error messages"`
@@ -26,6 +28,8 @@ type ExecuteArgs struct {
 	Stdin      io.Reader
 	Args       []string
 }
+
+var errEmptyInputStream = errors.New("need at least one version")
 
 func Execute(cfg *ExecuteArgs) error {
 	vars := kong.Vars{

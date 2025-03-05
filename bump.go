@@ -71,12 +71,44 @@ func (v *Version) BumpPrerelease() error {
 	return nil
 }
 
-func (v *Version) SetPrelease(pre string) {
+func (v *Version) SetPrelease(pre string) error {
+	pre = strings.TrimSpace(pre)
+	if pre == "" {
+		v.pre = nil
+		return nil
+	}
+
 	v.pre = strings.Split(pre, ".")
+
+	n, err := ParseStrict(v.String())
+	if err != nil {
+		return err
+	}
+
+	//lint:ignore SA4006 updates receiver
+	v = n.Clone()
+
+	return nil
 }
 
-func (v *Version) SetBuildMetadata(meta string) {
+func (v *Version) SetBuildMetadata(meta string) error {
+	meta = strings.TrimSpace(meta)
+	if meta == "" {
+		v.meta = nil
+		return nil
+	}
+
 	v.meta = strings.Split(meta, ".")
+
+	n, err := ParseStrict(v.String())
+	if err != nil {
+		return err
+	}
+
+	//lint:ignore SA4006 updates receiver
+	v = n.Clone()
+
+	return nil
 }
 
 func (v *Version) bumpNumericString(s string) (string, error) {
