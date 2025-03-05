@@ -50,3 +50,50 @@ func TestNext(t *testing.T) {
 		helper(testCase[0], testCase[1])
 	}
 }
+
+func TestNextWithExistingPrerelease(t *testing.T) {
+	toTest := []string{
+		"v1.0.0-rc",
+		"2.1.0-rc.2",
+		"1.6.4-beta.alpha.3",
+		"5.0.0-rc.alpha0+meta",
+		"1",
+	}
+
+	expectedResults := []string{
+		"1.0.0-rc.1",
+		"2.1.0-rc.3",
+		"1.6.4-beta.alpha.4",
+		"5.0.0-rc.alpha0.1",
+		"1.0.1-rc.1",
+	}
+
+	helper := func(underTest string, expected string) {
+		t.Helper()
+
+		stdin := strings.NewReader(underTest)
+		stdout := &strings.Builder{}
+		args := []string{"next", "prerelease"}
+
+		err := commands.Execute(&commands.ExecuteArgs{
+			CLIVersion: testCLIVersion,
+			Stdout:     stdout,
+			Stderr:     io.Discard,
+			Stdin:      stdin,
+			Args:       args,
+		})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		actual := strings.TrimSpace(stdout.String())
+		if actual != expected {
+			t.Fatalf("%q should equal %q", actual, expected)
+		}
+	}
+
+	for i := range toTest {
+		helper(toTest[i], expectedResults[i])
+	}
+}

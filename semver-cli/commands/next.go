@@ -35,11 +35,17 @@ func (n *NextCommand) Run(k *kong.Context, versions semver.Versions) error {
 			return err
 		}
 	case "prerelease":
-		if err := latest.BumpPatch(); err != nil {
-			return err
+		isRelease := len(latest.Prerelease()) == 0
+
+		if isRelease {
+			if err := latest.BumpPatch(); err != nil {
+				return err
+			}
+			latest.SetPrelease("rc.1")
+		} else {
+			latest.BumpPrerelease()
 		}
 
-		latest.SetPrelease("rc.1")
 	default:
 		return fmt.Errorf("unrecognized field %s", n.Field)
 	}
