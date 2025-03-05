@@ -128,4 +128,14 @@ func TestBumpNegativeCases(t *testing.T) {
 	if err == nil {
 		t.Fatal("BumpPrerelease on an empty prerelease should have errored")
 	}
+
+	err = v.Clone().SetPrelease("%")
+	if err == nil {
+		t.Fatal("SetPrerelease with an invalid character should have errored")
+	}
+
+	err = v.Clone().SetBuildMetadata(".")
+	if err == nil {
+		t.Fatal("SetBuildMetadata with an invalid character should have errored")
+	}
 }
