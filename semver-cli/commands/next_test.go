@@ -7,7 +7,7 @@ import (
 
 	"github.com/jghiloni/go-commonutils/utils"
 	"github.com/jghiloni/semver"
-	"github.com/jghiloni/semver/cli/commands"
+	"github.com/jghiloni/semver/semver-cli/commands"
 )
 
 var testCLIVersion = utils.Must(semver.ParseStrict("0.0.0"))

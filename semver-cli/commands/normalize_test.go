@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jghiloni/semver/cli/commands"
+	"github.com/jghiloni/semver/semver-cli/commands"
 )
 
 func TestNormalize(t *testing.T) {

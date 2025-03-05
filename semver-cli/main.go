@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/jghiloni/semver"
-	"github.com/jghiloni/semver/cli/commands"
+	"github.com/jghiloni/semver/semver-cli/commands"
 )
 
 var (
