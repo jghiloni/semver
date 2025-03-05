@@ -9,6 +9,10 @@ import (
 
 var bi1 = big.NewInt(1)
 
+// BumpMajor attempts to increment the major field of the version by 1. If it's
+// successful, it resets the minor and patch fields to 0 and unsets the prerelease
+// and build metadata fields. It only errors if major is not parsable by
+// (*math/big.Int).SetString, which should not occur.
 func (v *Version) BumpMajor() error {
 	var err error
 	v.major, err = v.bumpNumericString(v.major)
@@ -24,6 +28,10 @@ func (v *Version) BumpMajor() error {
 	return nil
 }
 
+// BumpMinor attempts to increment the minor field of the version by 1. If it's
+// successful, it resets the patch field to 0 and unsets the prerelease
+// and build metadata fields. It only errors if minor is not parsable by
+// (*math/big.Int).SetString, which should not occur.
 func (v *Version) BumpMinor() error {
 	var err error
 	v.minor, err = v.bumpNumericString(v.minor)
@@ -38,6 +46,10 @@ func (v *Version) BumpMinor() error {
 	return nil
 }
 
+// BumpPatch attempts to increment the patch field of the version by 1. If it's
+// successful, it unsets the prerelease and build metadata fields. It only
+// errors if major is not parsable by (*math/big.Int).SetString, which should
+// not occur.
 func (v *Version) BumpPatch() error {
 	var err error
 	v.patch, err = v.bumpNumericString(v.patch)
@@ -51,26 +63,36 @@ func (v *Version) BumpPatch() error {
 	return nil
 }
 
+// BumpPrerelease inspects the version's prerelease information, and if the last
+// field is a number, increment it. If it is not, append ".1" to the end of the
+// prerelease information. It returns an error if prerelease is empty.
 func (v *Version) BumpPrerelease() error {
 	if len(v.pre) == 0 {
 		return errors.New("can't bump empty prerelease")
 	}
 
 	lastPre := v.pre[len(v.pre)-1]
+	doAppend := true
 	if isStringNumeric(lastPre) {
 		bumped, err := v.bumpNumericString(lastPre)
-		if err != nil {
-			return fmt.Errorf("BumpPrerelease: %w", err)
+		if err == nil {
+			doAppend = false
+			v.pre[len(v.pre)-1] = bumped
 		}
-		v.pre[len(v.pre)-1] = bumped
-		return nil
 	}
 
-	v.pre = append(v.pre, "1")
+	if doAppend {
+		v.pre = append(v.pre, "1")
+	}
 	v.meta = nil
 	return nil
 }
 
+// SetPrerelease sets the prerelease information for the version. If the passed
+// string is empty or contains only whitespace, it unsets the prerelease info.
+// If it has data, it must be a dot-separated string, where each substring
+// contains only letters, numbers, and dashes. If a substring is fully numeric,
+// it must not be zero padded (if it starts with 0, it must be exactly 0).
 func (v *Version) SetPrelease(pre string) error {
 	pre = strings.TrimSpace(pre)
 	if pre == "" {
@@ -91,6 +113,10 @@ func (v *Version) SetPrelease(pre string) error {
 	return nil
 }
 
+// SetBuildMetadata sets the build metadata information for the version. If the passed
+// string is empty or contains only whitespace, it unsets the prerelease info.
+// If it has data, it must be a dot-separated string, where each substring
+// contains only letters, numbers, and dashes.
 func (v *Version) SetBuildMetadata(meta string) error {
 	meta = strings.TrimSpace(meta)
 	if meta == "" {
