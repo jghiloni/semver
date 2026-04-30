@@ -6,14 +6,30 @@ on:
 
 jobs:
   ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
+        os: [windows, linux, darwin]
+        go: [oldstable, stable]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        id: setup-go
+        with:
+          go-version: ${{matrix.go}}
       - name: Run Tests
+        env:
+          GOOS: ${{matrix.os}}
+          GOARCH: ${{matrix.arch}}
+          GOVERSION: ${{steps.setup-go.outputs.go-version}}
         run: |
-          GO_VERSION=$(awk '/^go / {print $NF}' go.mod)
-          echo "go version ${GO_VERSION}"
-          GOTOOLCHAIN="go${GO_VERSION}+auto" go test -race -cover ./...
+          GOTOOLCHAIN="go${GOVERSION}+auto"
+
+          echo "using go version ${GOVERSION} with toolchain ${GOTOOLCHAIN}"
+          export GOTOOLCHAIN
+
+          go test -race -cover ./...
       - name: Build
-        run: go build -o $TMPDIR/semver-cli ./semver-cli/
+        run: go build ./semver-cli/
