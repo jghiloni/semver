@@ -10,7 +10,6 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm64]
-        os: [windows, linux, darwin]
         go: [oldstable, stable]
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +20,7 @@ jobs:
           go-version: ${{matrix.go}}
       - name: Run Tests
         env:
-          GOOS: ${{matrix.os}}
+          GOOS: linux
           GOARCH: ${{matrix.arch}}
           GOVERSION: ${{steps.setup-go.outputs.go-version}}
         run: |
@@ -30,6 +29,9 @@ jobs:
           echo "using go version ${GOVERSION} with toolchain ${GOTOOLCHAIN}"
           export GOTOOLCHAIN
 
-          go test -cover ./...
+          go test -race -cover ./...
       - name: Build
+        env:
+          GOOS: linux
+          GOARCH: ${{matrix.arch}}
         run: go build -o $(mktemp) ./semver-cli/
