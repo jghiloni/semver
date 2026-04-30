@@ -9,7 +9,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [amd64, arm64]
         go: [oldstable, stable]
     runs-on: ubuntu-latest
     steps:
@@ -20,8 +19,6 @@ jobs:
           go-version: ${{matrix.go}}
       - name: Run Tests
         env:
-          GOOS: linux
-          GOARCH: ${{matrix.arch}}
           GOVERSION: ${{steps.setup-go.outputs.go-version}}
         run: |
           GOTOOLCHAIN="go${GOVERSION}+auto"
@@ -31,7 +28,4 @@ jobs:
 
           go test -race -cover ./...
       - name: Build
-        env:
-          GOOS: linux
-          GOARCH: ${{matrix.arch}}
         run: go build -o $(mktemp) ./semver-cli/
