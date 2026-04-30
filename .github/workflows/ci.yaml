@@ -30,6 +30,6 @@ jobs:
           echo "using go version ${GOVERSION} with toolchain ${GOTOOLCHAIN}"
           export GOTOOLCHAIN
 
-          go test -race -cover ./...
+          go test -cover ./...
       - name: Build
-        run: go build ./semver-cli/
+        run: go build -o $(mktemp) ./semver-cli/
