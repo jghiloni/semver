@@ -1,8 +1,7 @@
 module github.com/jghiloni/semver
 
-go 1.24.0
+go 1.25.5
 
-require (
-	github.com/alecthomas/kong v1.8.1
-	github.com/jghiloni/go-commonutils v1.0.1
-)
+require github.com/alecthomas/kong v1.15.0
+
+require github.com/jghiloni/go-fp v1.1.1

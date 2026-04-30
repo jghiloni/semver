@@ -5,13 +5,19 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jghiloni/go-commonutils/utils"
 	"github.com/jghiloni/semver"
 	"github.com/jghiloni/semver/semver-cli/commands"
 )
 
-var testCLIVersion = utils.Must(semver.ParseStrict("0.0.0"))
+var testCLIVersion *semver.Version
 
+func init() {
+	var err error
+	testCLIVersion, err = semver.ParseStrict("0.0.0")
+	if err != nil {
+		panic(err)
+	}
+}
 func TestNext(t *testing.T) {
 	params := [][]string{
 		{"major", "11.0.0"},

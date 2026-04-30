@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/alecthomas/kong"
-	"github.com/jghiloni/go-commonutils/utils"
+	"github.com/jghiloni/go-fp/fslices"
 	"github.com/jghiloni/semver"
 )
 
@@ -62,7 +62,7 @@ func getVersions(k *kong.Context, args cmdLineArgs, stdin io.Reader) semver.Vers
 	}
 
 	versionStrings := strings.Fields(string(inBytes))
-	var versions semver.Versions = utils.Map(versionStrings, func(vs string) *semver.Version {
+	var versions semver.Versions = fslices.Map(versionStrings, func(vs string) *semver.Version {
 		v, err := semver.ParseTolerant(vs)
 		if err != nil {
 			fmt.Fprintln(k.Stderr, err)
@@ -75,7 +75,7 @@ func getVersions(k *kong.Context, args cmdLineArgs, stdin io.Reader) semver.Vers
 		return v
 	})
 
-	versions = utils.Filter(versions, func(v *semver.Version) bool {
+	versions = fslices.Filter(versions, func(v *semver.Version) bool {
 		return v != nil
 	})
 
