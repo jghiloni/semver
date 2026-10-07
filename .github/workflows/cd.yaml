@@ -35,7 +35,6 @@ jobs:
           mkdir dist
 
           VERSION=${INPUT_VERSION:-${GITHUB_REF}}
-          echo "VERSION=${VERSION}" >> ${GITHUB_OUTPUT}
 
           for platform in ${MATRIX[@]}; do
             goos=$(cut -d '/' -f1 <<< $platform)
@@ -48,15 +47,13 @@ jobs:
         env:
           INPUT_VERSION: ${{inputs.version}}
       - uses: actions/upload-artifact@v7
-        env:
-          VERSION: ${{steps.build.outputs.VERSION}}
         with:
           name: binaries
           path: |
-              dist/semver_linux_amd64_${VERSION}
-              dist/semver_linux_arm64_${VERSION}
-              dist/semver_darwin_arm64_${VERSION}
-              dist/semver_windows_amd64_${VERSION}.exe
+              dist/semver_linux_amd64_*
+              dist/semver_linux_arm64_*
+              dist/semver_darwin_arm64_*
+              dist/semver_windows_amd64_.*exe
   upload-release-assets:
     needs: [build]
     runs-on: ubuntu-latest
