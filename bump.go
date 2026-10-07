@@ -107,8 +107,7 @@ func (v *Version) SetPrelease(pre string) error {
 		return err
 	}
 
-	//lint:ignore SA4006 updates receiver
-	v = n.Clone()
+	v = n.Clone() //nolint:staticcheck
 
 	return nil
 }
@@ -131,9 +130,8 @@ func (v *Version) SetBuildMetadata(meta string) error {
 		return err
 	}
 
-	//lint:ignore SA4006 updates receiver
-	v = n.Clone()
-
+	v = n.Clone() //nolint:staticcheck
+	
 	return nil
 }
 

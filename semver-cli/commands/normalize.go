@@ -23,7 +23,7 @@ func (n *NormalizeCommand) Run(k *kong.Context, versions semver.Versions) error 
 	}
 
 	for _, v := range versions {
-		fmt.Fprintln(k.Stdout, v)
+		_, _ = fmt.Fprintln(k.Stdout, v)
 	}
 
 	return nil

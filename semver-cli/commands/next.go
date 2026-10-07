@@ -40,15 +40,20 @@ func (n *NextCommand) Run(k *kong.Context, versions semver.Versions) error {
 			if err := latest.BumpPatch(); err != nil {
 				return err
 			}
-			latest.SetPrelease("rc.1")
+
+			if err := latest.SetPrelease("rc.1"); err != nil {
+				return err
+			}
 		} else {
-			latest.BumpPrerelease()
+			if err := latest.BumpPrerelease(); err != nil {
+				return err
+			}
 		}
 
 	default:
 		return fmt.Errorf("unrecognized field %s", n.Field)
 	}
 
-	fmt.Fprintln(k.Stdout, latest)
+	_, _ = fmt.Fprintln(k.Stdout, latest)
 	return nil
 }

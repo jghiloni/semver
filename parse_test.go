@@ -14,11 +14,14 @@ func TestParseStrict(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer testfile.Close()
+	defer testfile.Close() //nolint:errcheck
 
 	scanner := bufio.NewScanner(testfile)
 	for scanner.Scan() {
 		testVersion := scanner.Text()
+		if scanner.Err() != nil {
+			t.Fatal(scanner.Err())
+		}
 		v, err := semver.ParseStrict(testVersion)
 		if err != nil {
 			t.Fatalf("%q: %v", testVersion, err)
@@ -62,11 +65,14 @@ func TestParseInvalid(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer testfile.Close()
+	defer testfile.Close() //nolint:errcheck
 
 	scanner := bufio.NewScanner(testfile)
 	for scanner.Scan() {
 		testVersion := scanner.Text()
+		if scanner.Err() != nil {
+			t.Fatal(scanner.Err())
+		}
 		_, err := semver.ParseTolerant(testVersion)
 		if err == nil {
 			t.Fatalf("%q: expected error missing", testVersion)

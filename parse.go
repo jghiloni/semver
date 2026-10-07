@@ -29,9 +29,9 @@ func ParseTolerant(versionString string) (*Version, error) {
 
 func commonParse(versionString string, re *regexp.Regexp, groupNames []string, defaultFieldVal string) (*Version, error) {
 	var (
-		major string = defaultFieldVal
-		minor string = defaultFieldVal
-		patch string = defaultFieldVal
+		major = defaultFieldVal
+		minor = defaultFieldVal
+		patch = defaultFieldVal
 
 		pre, meta []string
 	)

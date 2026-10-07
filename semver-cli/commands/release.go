@@ -19,7 +19,7 @@ func (cmd *ReleaseCommand) Run(k *kong.Context, versions semver.Versions) error 
 			return errEmptyInputStream
 		}
 
-		fmt.Fprintln(k.Stderr, errEmptyInputStream)
+		_, _ = fmt.Fprintln(k.Stderr, errEmptyInputStream)
 		return nil
 	}
 
@@ -33,13 +33,17 @@ func (cmd *ReleaseCommand) Run(k *kong.Context, versions semver.Versions) error 
 			return errors.New(msg)
 		}
 
-		fmt.Fprintln(k.Stderr, msg)
+		_, _ = fmt.Fprintln(k.Stderr, msg)
 		return nil
 	}
 
-	latest.SetPrelease("")
-	latest.SetBuildMetadata("")
+	if err := latest.SetPrelease(""); err != nil {
+		return err
+	}
+	if err := latest.SetBuildMetadata(""); err != nil {
+		return err
+	}
 
-	fmt.Fprintln(k.Stdout, latest)
+	_, _ = fmt.Fprintln(k.Stdout, latest)
 	return nil
 }

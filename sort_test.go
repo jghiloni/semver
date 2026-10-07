@@ -32,13 +32,16 @@ func loadVersions(t *testing.T, file string) semver.Versions {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer fp.Close()
+	defer fp.Close() //nolint:errcheck
 
 	versions := make(semver.Versions, 0, 31)
 
 	scanner := bufio.NewScanner(fp)
 	for scanner.Scan() {
 		vs := scanner.Text()
+		if scanner.Err() != nil {
+			t.Fatal(scanner.Err())
+		}
 		v, err := semver.ParseStrict(vs)
 		if err != nil {
 			t.Fatalf("%q: %v", vs, err)

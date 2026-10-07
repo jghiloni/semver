@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+      - run: |
+          go test -race -cover ./...
+  build:
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+      - run: |
+          MATRIX=("linux/amd64" "linux/arm64" "darwin/arm64" "windows/amd64")
+          mkdir dist
+
+          for platform in ${MATRIX[@]}; do
+            goos=$(cut -d '/' -f1 <<< $platform)
+            goarch=$(cut -d '/' -f2 <<< $platform)
+
+            GOOS=$goos GOARCH=$goarch CGO_ENABLED=0 go build -o dist/semver_${goos}_${goarch}_${GITHUB_REF} -trimpath -ldflags="-s -w -X 'main.version=${GITHUB_REF}' -X 'main.buildRef=${GITHUB_SHA:0:7}'" ./semver-cli/
+          done
+      - uses: actions/upload-artifact@v7
+        with:
+          name: binaries
+          path: dist
+  upload-release-assets:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        id: download-artifacts
+        with:
+          name: binaries
+      - run: |
+          gh release upload ${GITHUB_REF} ${DOWNLOAD_DIR}/**
+        env:
+          DOWNLOAD_DIR: ${{steps.download-artifacts.outputs.download-path}}
+          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}

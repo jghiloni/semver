@@ -16,6 +16,7 @@ type cmdLineArgs struct {
 	Normalize             *NormalizeCommand `cmd:"" default:"1" help:"Parse the versions on stdin in a tolerant way and output them as compliant semver strings"`
 	Next                  *NextCommand      `cmd:"" help:"Take the latest version on stdin and increase it based on which field is chosen"`
 	Release               *ReleaseCommand   `cmd:"" help:"If the latest version on stdin has prerelease information, remove it"`
+	Compare               *CompareCommand   `cmd:"" help:"Compare each version on stdin with the version on the command line"`
 	Version               kong.VersionFlag  `short:"V" help:"Show the version of this CLI and exit"`
 	IgnoreInvalidVersions bool              `short:"i" negatable:"" default:"true" help:"If set, discard any text on stdin that does not parse as a semver string"`
 	Silent                bool              `short:"q" help:"If set, don't output error messages"`
@@ -57,7 +58,7 @@ func Execute(cfg *ExecuteArgs) error {
 func getVersions(k *kong.Context, args cmdLineArgs, stdin io.Reader) semver.Versions {
 	inBytes, err := io.ReadAll(stdin)
 	if err != nil {
-		fmt.Fprintln(k.Stderr, err)
+		_, _ = fmt.Fprintln(k.Stderr, err)
 		os.Exit(1)
 	}
 
@@ -65,7 +66,7 @@ func getVersions(k *kong.Context, args cmdLineArgs, stdin io.Reader) semver.Vers
 	var versions semver.Versions = fslices.Map(versionStrings, func(vs string) *semver.Version {
 		v, err := semver.ParseTolerant(vs)
 		if err != nil {
-			fmt.Fprintln(k.Stderr, err)
+			_, _ = fmt.Fprintln(k.Stderr, err)
 			if !args.IgnoreInvalidVersions {
 				os.Exit(1)
 			}
