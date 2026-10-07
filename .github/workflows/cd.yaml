@@ -53,7 +53,7 @@ jobs:
               dist/semver_linux_amd64_*
               dist/semver_linux_arm64_*
               dist/semver_darwin_arm64_*
-              dist/semver_windows_amd64_.*exe
+              dist/semver_windows_amd64_*.exe
   upload-release-assets:
     needs: [build]
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
           name: binaries
       - run: |
           VERSION=${INPUT_VERSION:-${GITHUB_REF}}
-          ls -R $DOWNLOAD_DIR
+          gh release upload ${VERSION} ${DOWNLOAD_DIR}/semver_* -R jghiloni/semver
         env:
           INPUT_VERSION: ${{inputs.version}}
           DOWNLOAD_DIR: ${{steps.download-artifacts.outputs.download-path}}
