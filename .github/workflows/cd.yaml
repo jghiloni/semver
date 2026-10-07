@@ -45,7 +45,7 @@ jobs:
         with:
           name: binaries
       - run: |
-          gh release upload ${GITHUB_REF} ${DOWNLOAD_DIR}/**
+          gh release upload ${GITHUB_REF} ${DOWNLOAD_DIR}/** -R jghiloni/semver
         env:
           DOWNLOAD_DIR: ${{steps.download-artifacts.outputs.download-path}}
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
