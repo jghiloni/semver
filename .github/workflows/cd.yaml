@@ -4,6 +4,13 @@ on:
   release:
     types: [released]
 
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        default: ""
+        required: false
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -26,12 +33,16 @@ jobs:
           MATRIX=("linux/amd64" "linux/arm64" "darwin/arm64" "windows/amd64")
           mkdir dist
 
+          VERSION=${INPUT_VERSION:-${GITHUB_REF}}
+
           for platform in ${MATRIX[@]}; do
             goos=$(cut -d '/' -f1 <<< $platform)
             goarch=$(cut -d '/' -f2 <<< $platform)
 
             GOOS=$goos GOARCH=$goarch CGO_ENABLED=0 go build -o dist/semver_${goos}_${goarch}_${GITHUB_REF} -trimpath -ldflags="-s -w -X 'main.version=${GITHUB_REF}' -X 'main.buildRef=${GITHUB_SHA:0:7}'" ./semver-cli/
           done
+        env:
+          INPUT_VERSION: ${{inputs.version}}
       - uses: actions/upload-artifact@v7
         with:
           name: binaries
@@ -45,7 +56,9 @@ jobs:
         with:
           name: binaries
       - run: |
-          gh release upload ${GITHUB_REF} ${DOWNLOAD_DIR}/** -R jghiloni/semver
+          VERSION=${INPUT_VERSION:-${GITHUB_REF}}
+          ls -R $DOWNLOAD_DIR
         env:
+          INPUT_VERSION: ${{inputs.version}}
           DOWNLOAD_DIR: ${{steps.download-artifacts.outputs.download-path}}
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
