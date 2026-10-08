@@ -29,7 +29,7 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version: stable
-      - id: build 
+      - id: build
         run: |
           MATRIX=("linux/amd64" "linux/arm64" "darwin/arm64" "windows/amd64")
           mkdir dist
@@ -50,13 +50,15 @@ jobs:
         with:
           name: binaries
           path: |
-              dist/semver_linux_amd64_*
-              dist/semver_linux_arm64_*
-              dist/semver_darwin_arm64_*
-              dist/semver_windows_amd64_*.exe
+            dist/semver_linux_amd64_*
+            dist/semver_linux_arm64_*
+            dist/semver_darwin_arm64_*
+            dist/semver_windows_amd64_*.exe
   upload-release-assets:
     needs: [build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/download-artifact@v8
         id: download-artifacts
@@ -68,4 +70,4 @@ jobs:
         env:
           INPUT_VERSION: ${{inputs.version}}
           DOWNLOAD_DIR: ${{steps.download-artifacts.outputs.download-path}}
-          GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GH_TOKEN: ${{github.token}}
